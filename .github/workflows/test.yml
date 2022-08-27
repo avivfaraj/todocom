@@ -1,7 +1,7 @@
 ## Code from https://github.com/marketplace/actions/install-poetry-action
 name: test
 
-on: pull_request
+on: push
 
 jobs:
   test:
