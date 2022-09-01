@@ -9,8 +9,15 @@ CYAN = "\033[1;36m"
 WHITE = "\033[0m"
 
 # Ignore files/dirs lists
-ignore_files = ["__main__.py", "__init__.py", ".DS_Store", "pyproject.toml", "poetry.lock", "README.rst"]
-ignore_dirs = ["__pycache__", "tests"]
+ignore_files = ["__main__.py",
+                "__init__.py",
+                ".DS_Store",
+                "pyproject.toml",
+                "poetry.lock",
+                "README.md",
+                ".gitignore",
+                "LICENSE"]
+ignore_dirs = ["__pycache__", "tests", ".git", ".github"]
 
 
 def format_todos(tokens = [], color = True):
