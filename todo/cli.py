@@ -1,13 +1,12 @@
 import argparse
 from todo.tokenize import tokenize
 from todo.utils import get_files, print_todos, save_todos
-import sys
 
 
 def main():
     # create a parser object
     parser = argparse.ArgumentParser(description = "Read directories")
-     
+
     # add argument
     parser.add_argument("dirs",
                         nargs = '*',
@@ -22,12 +21,12 @@ def main():
         action="store_true",
         help=("Retrieve 'urgent' TODO comments. "))
 
-    # Soon priority (activate using -s or --soon) 
+    # Soon priority (activate using -s or --soon)
     parser.add_argument(
         "-s", "--soon",
         action="store_true",
         help=("Retrieve 'soon' TODO comments. "))
- 
+
     parser.add_argument(
         "-o", "--output",
         nargs = "?",
@@ -38,7 +37,7 @@ def main():
 
     # parse the arguments from standard input
     args = parser.parse_args()
-    
+
     _ = get_files(args.dirs)
     urgent_todos = []
     reg_todos = []
@@ -63,7 +62,7 @@ def main():
         save_todos(args.out, todos)
 
     else:
-        # Print to terminal 
+        # Print to terminal
         print_todos(urgent_todos)
         print_todos(soon_todos)
         print_todos(reg_todos)

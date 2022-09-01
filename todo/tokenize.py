@@ -1,12 +1,14 @@
 from typing import NamedTuple
 import re
 
+
 class Token(NamedTuple):
     re_type: str
     file: str
     value: str
     line: int
     # date:
+
 
 def tokenize(code, file, **kwargs):
     """
@@ -28,20 +30,24 @@ def tokenize(code, file, **kwargs):
 
     # Configurations
     token_specification = [
-        ('single_line', '({}:).*'.format(single)),            
+        ('single_line', '({}:).*'.format(single)),
         ('multiline', '({}:)[\\s\\S]*?(\"\"\")'.format(multi)),
         ('urgent', '({} urgent:).*'.format(single)),
         ('urgent_multiline', '({} urgent:)[\\s\\S]*?(\"\"\")'.format(multi)),
         ('soon', '({} soon:).*'.format(single)),
         ('soon_multiline', '({} soon:)[\\s\\S]*?(\"\"\")'.format(multi)),
-        ('newline',  r'\n')
+        ('newline', r'\n')
     ]
 
     if kwargs["urgent"]:
-        tok_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specification if "urgent" in pair[0] or "newline" in pair[0])
+        tok_regex = '|'.join('(?P<%s>%s)' % pair
+                             for pair in token_specification
+                             if "urgent" in pair[0] or "newline" in pair[0])
 
     elif kwargs["soon"]:
-        tok_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specification if "soon" in pair[0] or "newline" in pair[0])
+        tok_regex = '|'.join('(?P<%s>%s)' % pair
+                             for pair in token_specification
+                             if "soon" in pair[0] or "newline" in pair[0])
 
     else:
         tok_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specification)
@@ -98,7 +104,7 @@ def tokenize(code, file, **kwargs):
             # Required to prevent "\n" from being considered twice
             end_last_token = mo.end()
 
-            yield Token(kind, file, value, line_num)               
+            yield Token(kind, file, value, line_num)
 
         # Ensure token is a newline
         if kind == 'newline':

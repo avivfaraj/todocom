@@ -1,5 +1,4 @@
 import os
-from todo.tokenize import tokenize
 from pathlib import Path
 
 # Constants
@@ -9,7 +8,13 @@ CYAN = "\033[1;36m"
 WHITE = "\033[0m"
 
 # Ignore files/dirs lists
-ignore_files = ["__main__.py", "__init__.py", ".DS_Store", "pyproject.toml", "poetry.lock", "README.rst"]
+ignore_files = ["__main__.py",
+                "__init__.py",
+                ".DS_Store",
+                "pyproject.toml",
+                "poetry.lock",
+                "README.md"]
+
 ignore_dirs = ["__pycache__", "tests"]
 
 
@@ -26,7 +31,7 @@ def format_todos(tokens = [], color = True):
         List of all TODO tokens
 
     color: Boolean
-        If True -> prints urgent and soon TODO comments in a different 
+        If True -> prints urgent and soon TODO comments in a different
         color to emphasize them.
 
     Return:
@@ -49,7 +54,9 @@ def format_todos(tokens = [], color = True):
             end = ""
 
         for token in tokens:
-            yield f'{token.file} --> pr: {token.re_type}, Line: {token.line}, comment: {font_color} {token.value} {end}'
+            yield (f'{token.file} --> pr: {token.re_type}, '
+                   f'Line: {token.line}, comment: {font_color} {token.value} {end}')
+
 
 def print_todos(tokens = []):
     """
@@ -57,6 +64,7 @@ def print_todos(tokens = []):
     """
     for i in format_todos(tokens):
         print(i)
+
 
 def save_todos(file_path, tokens = []):
     """
