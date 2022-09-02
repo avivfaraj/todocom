@@ -1,4 +1,4 @@
-from todo.utils import get_files
+from todocom.utils import get_files
 
 
 directory = "./tests/files"

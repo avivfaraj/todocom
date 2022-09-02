@@ -1,6 +1,6 @@
 import argparse
-from todo.tokenize import tokenize
-from todo.utils import get_files, print_todos, save_todos
+from todocom.tokenize import tokenize
+from todocom.utils import get_files, print_todos, save_todos
 
 
 def main():
@@ -44,6 +44,7 @@ def main():
     soon_todos = []
     todos = []
     for file in _:
+        # Todo soon: Add try-catch for UnicodeDecodeError: 'utf-8' codec can't decode byte 0x8b in position 1: invalid start byte
         with open(file, "r") as f:
             for token in tokenize(f.read(), file, urgent = args.urgent, soon = args.soon):
 

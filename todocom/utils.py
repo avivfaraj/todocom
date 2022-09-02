@@ -16,7 +16,12 @@ ignore_files = ["__main__.py",
                 "README.md",
                 ".gitignore",
                 "LICENSE"]
-ignore_dirs = ["__pycache__", "tests", ".git", ".github"]
+
+ignore_dirs = ["__pycache__",
+               "tests",
+               ".git",
+               ".github",
+               "dist"]
 
 
 def format_todos(tokens = [], color = True):

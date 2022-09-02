@@ -1,4 +1,4 @@
-from todo.tokenize import tokenize, Token
+from todocom.tokenize import tokenize, Token
 
 
 # Configs

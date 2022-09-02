@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "todo"
-version = "0.1.0"
+name = "todocom"
+version = "0.2.1"
 description = ""
 authors = ["avivfaraj <avivfaraj4@gmail.com>"]
 
@@ -11,7 +11,7 @@ python = "^3.10"
 pytest = "^5.2"
 
 [tool.poetry.scripts]
-todo = 'todo.cli:main'
+todo = 'todocom.cli:main'
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
