@@ -44,7 +44,7 @@ def main():
     soon_todos = []
     todos = []
     for file in _:
-        # Todo soon: Add try-catch for UnicodeDecodeError: 'utf-8' codec can't decode byte 0x8b in position 1: invalid start byte
+        # Todo soon: Add try-catch for UnicodeDecodeError: 'utf-8' codec can't decode byte 0x8b in position 1: invalid start byte  # noqa: E501
         with open(file, "r") as f:
             for token in tokenize(f.read(), file, urgent = args.urgent, soon = args.soon):
 

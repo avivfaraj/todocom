@@ -1,14 +1,31 @@
 [tool.poetry]
 name = "todocom"
-version = "0.2.1"
-description = ""
+version = "0.2.2"
+description = "CLI to retrieve a list of all TODO comments in the code"
 authors = ["avivfaraj <avivfaraj4@gmail.com>"]
+license = "GNU-3.0"
+readme = "README.md"
+homepage = "https://github.com/avivfaraj/todocom"
+repository = "https://github.com/avivfaraj/todocom"
+documentation = "https://github.com/avivfaraj/todocom"
+
+keywords = ["todo", "todo-list", "todo-comments", "cli"]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License V3(GPLV3)",
+    "Operating System :: OS Independent"
+]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/avivfaraj/todocom/issues"
 
 [tool.poetry.dependencies]
 python = "^3.10"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
+flake8 = "^5.0.4"
 
 [tool.poetry.scripts]
 todo = 'todocom.cli:main'
