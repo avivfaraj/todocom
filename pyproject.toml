@@ -25,7 +25,6 @@ python = "^3.10"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
-flake8 = "5.0.4"
 
 [tool.poetry.scripts]
 todo = 'todocom.cli:main'
