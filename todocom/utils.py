@@ -23,7 +23,7 @@ ignore_dirs = ["__pycache__",
                ".github",
                "dist"]
 
-
+# Todo @avivfaraj: test
 def format_todos(tokens = [], color = True):
     """
     A generator function that receives list of TODO tokens
@@ -60,8 +60,12 @@ def format_todos(tokens = [], color = True):
             end = ""
 
         for token in tokens:
-            yield (f'{token.file} --> pr: {token.re_type}, '
-                   f'Line: {token.line}, comment: {font_color} {token.value} {end}')
+            if not token.assign:
+                yield (f'{token.file} --> pr: {token.re_type}, '
+                       f'Line: {token.line}, comment: {font_color} {token.value} {end}')
+            else:
+                yield (f'{token.file} --> pr: {token.re_type}, assigned: {token.assign}, '
+                       f'Line: {token.line}, comment: {font_color} {token.value} {end}')
 
 
 def print_todos(tokens = []):
@@ -104,9 +108,11 @@ def get_files(path_ls = []):
     """
     files_ls = []
     for path in path_ls:
-        if os.path.exists(os.path.dirname(path)):
-            for root, dirs, files in os.walk(path, topdown=True):
+        if os.path.isfile(path):
+            yield path
 
+        if os.path.isdir(path):
+            for root, dirs, files in os.walk(path, topdown=True):
                 # Remove unwanted directories from list
                 [dirs.remove(i) for i in ignore_dirs if i in dirs]
 
@@ -114,7 +120,6 @@ def get_files(path_ls = []):
                 [files.remove(i) for i in ignore_files if i in files]
 
                 for file in files:
-                    if file not in ignore_files:
-                        yield f'{root}/{file}'
 
-    return files_ls
+                    if file not in ignore_files:
+                        yield f'{root}/{file}'.replace("//", "/")

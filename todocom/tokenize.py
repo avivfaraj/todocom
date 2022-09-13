@@ -7,6 +7,7 @@ class Token(NamedTuple):
     file: str
     value: str
     line: int
+    assign: str = None
     # date:
 
 
@@ -27,6 +28,7 @@ def tokenize(code, file, **kwargs):
 
     single = '[Tt][Oo0][\\-\\_]?[Dd][Oo0]'
     multi = '\"{3} [Tt][Oo0][\\-\\_]?[Dd][Oo0]'
+    assign_to, et_index = None, -1
 
     # Configurations
     token_specification = [
@@ -36,6 +38,7 @@ def tokenize(code, file, **kwargs):
         ('urgent_multiline', '({} urgent:)[\\s\\S]*?(\"\"\")'.format(multi)),
         ('soon', '({} soon:).*'.format(single)),
         ('soon_multiline', '({} soon:)[\\s\\S]*?(\"\"\")'.format(multi)),
+        ('assign', '({} @).*'.format(single)),
         ('newline', r'\n')
     ]
 
@@ -79,7 +82,12 @@ def tokenize(code, file, **kwargs):
             # Clean comment and find its starting index
             value = re.sub("\n", " ", value.strip())
             value = re.sub(" +", " ", value.strip())
+
             index = re.search(":", value).span()[0]
+            
+            if kind == "assign":
+                et_index = re.search("@", value).span()[0]
+            
             multi_line_num = 1
 
             # Ensure ":" was found
@@ -96,15 +104,21 @@ def tokenize(code, file, **kwargs):
                 value = value[index + 1: -3].strip()
 
             else:
+                if kind != "assign": 
+                    assign_to = None
+                else:
+                    assign_to = value[et_index + 1: index].strip()
 
                 # Comment is single line --> store it all
                 value = value[index + 1:].strip()
+                
+
 
             # Store the last char in the token
             # Required to prevent "\n" from being considered twice
             end_last_token = mo.end()
 
-            yield Token(kind, file, value, line_num)
+            yield Token(kind, file, value, line_num, assign_to)
 
         # Ensure token is a newline
         if kind == 'newline':
