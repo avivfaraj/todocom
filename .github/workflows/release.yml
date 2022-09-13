@@ -91,7 +91,8 @@ jobs:
 
           # Publish to test-pypi to ensure no errors
           poetry publish --build -r test-pypi
-
+          
+      - run: poetry config pypi-token.pypi "${{ secrets.PYPI_TOKEN }}"
       - name: Publish package
         run:
-          poetry publish --build -u __token__ -p ${{ secrets.PYPI_TOKEN }}
+          poetry publish --build
