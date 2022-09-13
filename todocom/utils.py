@@ -23,6 +23,7 @@ ignore_dirs = ["__pycache__",
                ".github",
                "dist"]
 
+
 # Todo @avivfaraj: test
 def format_todos(tokens = [], color = True):
     """
@@ -106,7 +107,6 @@ def get_files(path_ls = []):
     ----------
     List of all files to be read and checked for TODO comments
     """
-    files_ls = []
     for path in path_ls:
         if os.path.isfile(path):
             yield path

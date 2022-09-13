@@ -84,10 +84,10 @@ def tokenize(code, file, **kwargs):
             value = re.sub(" +", " ", value.strip())
 
             index = re.search(":", value).span()[0]
-            
+
             if kind == "assign":
                 et_index = re.search("@", value).span()[0]
-            
+
             multi_line_num = 1
 
             # Ensure ":" was found
@@ -104,15 +104,13 @@ def tokenize(code, file, **kwargs):
                 value = value[index + 1: -3].strip()
 
             else:
-                if kind != "assign": 
+                if kind != "assign":
                     assign_to = None
                 else:
                     assign_to = value[et_index + 1: index].strip()
 
                 # Comment is single line --> store it all
                 value = value[index + 1:].strip()
-                
-
 
             # Store the last char in the token
             # Required to prevent "\n" from being considered twice
