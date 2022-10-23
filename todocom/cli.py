@@ -2,6 +2,9 @@ import argparse
 from todocom.tokenize import tokenize
 from todocom.utils import get_files, print_todos, save_todos
 
+WHITE = "\033[0m"
+YELLOW = "\033[33m"
+
 
 def main():
     # create a parser object
@@ -44,19 +47,20 @@ def main():
     soon_todos = []
     todos = []
     for file in _:
-        # Todo soon: Add try-catch for UnicodeDecodeError: 'utf-8' codec can't decode byte 0x8b in position 1: invalid start byte  # noqa: E501
         with open(file, "r") as f:
-            for token in tokenize(f.read(), file, urgent = args.urgent, soon = args.soon):
-
-                if args.out:
-                    todos.append(token)
-                else:
-                    if "urgent" in token.re_type:
-                        urgent_todos.append(token)
-                    elif "soon" in token.re_type:
-                        soon_todos.append(token)
+            try:
+                for token in tokenize(f.read(), file, urgent = args.urgent, soon = args.soon):
+                    if args.out:
+                        todos.append(token)
                     else:
-                        reg_todos.append(token)
+                        if "urgent" in token.re_type:
+                            urgent_todos.append(token)
+                        elif "soon" in token.re_type:
+                            soon_todos.append(token)
+                        else:
+                            reg_todos.append(token)
+            except UnicodeDecodeError:
+                print(f"{YELLOW}**** Warning: Couldn't read file {file} **** \n{WHITE}")
 
     if args.out:
         # Store results in a txt file
