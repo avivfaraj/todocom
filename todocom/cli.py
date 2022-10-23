@@ -30,13 +30,23 @@ def main():
         action="store_true",
         help=("Retrieve 'soon' TODO comments. "))
 
+    # Output file argument
     parser.add_argument(
         "-o", "--output",
         nargs = "?",
         dest = "out",
-        const='./todo.txt',
-        default= None,
-        help=("Save comments in an external file"))
+        const = './todo.txt',
+        default = None,
+        help = ("Save comments in an external file"))
+
+    # Assigned argument
+    parser.add_argument(
+        "-a", "--assigned",
+        nargs = 1,
+        metavar = "assigned_to",
+        type = str,
+        default = None,
+        help = "Find all TODOs that were assigned to a specific user")
 
     # parse the arguments from standard input
     args = parser.parse_args()
@@ -49,7 +59,11 @@ def main():
     for file in _:
         with open(file, "r") as f:
             try:
-                for token in tokenize(f.read(), file, urgent = args.urgent, soon = args.soon):
+                for token in tokenize(f.read(),
+                                      file,
+                                      urgent = args.urgent,
+                                      soon = args.soon,
+                                      assigned = args.assigned):
                     if args.out:
                         todos.append(token)
                     else:
