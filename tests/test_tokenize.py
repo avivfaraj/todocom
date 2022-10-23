@@ -22,7 +22,7 @@ def test_tokenize_regular():
     with open(file, "r") as f:
 
         # Tokenize code in file
-        gen = tokenize(f.read(), file, urgent = False, soon = False)
+        gen = tokenize(f.read(), file, urgent = False, soon = False, assigned = None)
 
     # Create a set with all tokens
     gen_set = set(token for token in gen)
@@ -38,7 +38,7 @@ def test_tokenize_soon():
     soon_tokens = set(token for token in tokens if "soon" in token.re_type)
 
     with open(file, "r") as f:
-        gen = tokenize(f.read(), file, urgent = False, soon = True)
+        gen = tokenize(f.read(), file, urgent = False, soon = True, assigned = None)
 
     # Create a set with all tokens
     gen_set = set(token for token in gen)
@@ -54,7 +54,7 @@ def test_tokenize_urgent():
     urgent_tokens = set(token for token in tokens if "urgent" in token.re_type)
 
     with open(file, "r") as f:
-        gen = tokenize(f.read(), file, urgent = True, soon = False)
+        gen = tokenize(f.read(), file, urgent = True, soon = False, assigned = None)
 
     # Create a set with all tokens
     gen_set = set(token for token in gen)

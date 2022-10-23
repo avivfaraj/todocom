@@ -38,7 +38,7 @@ def tokenize(code, file, **kwargs):
         ('urgent_multiline', '({} urgent:)[\\s\\S]*?(\"\"\")'.format(multi)),
         ('soon', '({} soon:).*'.format(single)),
         ('soon_multiline', '({} soon:)[\\s\\S]*?(\"\"\")'.format(multi)),
-        ('assign', '({} @).*'.format(single)),
+        ('assign', '({} @{}).*'.format(single, str(kwargs["assigned"]).lower())),
         ('newline', r'\n')
     ]
 
@@ -52,8 +52,15 @@ def tokenize(code, file, **kwargs):
                              for pair in token_specification
                              if "soon" in pair[0] or "newline" in pair[0])
 
+    elif kwargs["assigned"]:
+        tok_regex = '|'.join('(?P<%s>%s)' % pair
+                             for pair in token_specification
+                             if "assign" in pair[0] or "newline" in pair[0])
+
     else:
-        tok_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specification)
+        tok_regex = '|'.join('(?P<%s>%s)' % pair
+                             for pair in token_specification
+                             if "assign" not in pair[0])
 
     line_num = 1
     multi_line_num = None
