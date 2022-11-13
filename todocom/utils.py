@@ -24,7 +24,6 @@ ignore_dirs = ["__pycache__",
                "dist"]
 
 
-# Todo @avivfaraj: test
 def format_todos(tokens = [], color = True):
     """
     A generator function that receives list of TODO tokens

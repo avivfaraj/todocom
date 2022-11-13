@@ -5,8 +5,15 @@ from todocom.utils import get_files, print_todos, save_todos
 WHITE = "\033[0m"
 YELLOW = "\033[33m"
 
+def cli_tool():
+    """
+    Define arguments for "todo" command (cli) using argparse package. 
 
-def main():
+    Return:
+    ------------
+    argparse.ArgumentParser Object 
+    """
+
     # create a parser object
     parser = argparse.ArgumentParser(description = "Read directories")
 
@@ -48,6 +55,12 @@ def main():
         default = None,
         help = "Find all TODOs that were assigned to a specific user")
 
+    return parser
+
+def main():
+
+    parser = cli_tool()
+
     # parse the arguments from standard input
     args = parser.parse_args()
 
@@ -59,22 +72,29 @@ def main():
     for file in _:
         with open(file, "r") as f:
             try:
-                for token in tokenize(f.read(),
-                                      file,
-                                      urgent = args.urgent,
-                                      soon = args.soon,
-                                      assigned = args.assigned):
-                    if args.out:
-                        todos.append(token)
-                    else:
-                        if "urgent" in token.re_type:
-                            urgent_todos.append(token)
-                        elif "soon" in token.re_type:
-                            soon_todos.append(token)
-                        else:
-                            reg_todos.append(token)
+                content = f.read()
             except UnicodeDecodeError:
                 print(f"{YELLOW}**** Warning: Couldn't read file {file} **** \n{WHITE}")
+                continue
+
+        # Tokenize file and iterate over tokens
+        for token in tokenize(content,
+                              file,
+                              urgent = args.urgent,
+                              soon = args.soon,
+                              assigned = args.assigned):
+        
+            # Ensure tokens are put in the correct list
+            if args.out:
+                todos.append(token)
+            else:
+                if "urgent" in token.re_type:
+                    urgent_todos.append(token)
+                elif "soon" in token.re_type:
+                    soon_todos.append(token)
+                else:
+                    reg_todos.append(token)
+            
 
     if args.out:
         # Store results in a txt file
