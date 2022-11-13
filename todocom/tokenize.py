@@ -13,16 +13,16 @@ class Token(NamedTuple):
 
 
 def create_alphanum_dict():
-    dict_temp = {"E" : ["3"],
-        "Z" : ["2"],
-        "I" : ["1"],
-        "A" : ["4"],
-        "F" : ["7"],
-        "G" : ["6", "9"],
-        "B" : ["8"],
-        "L" : ["1"],
-        "O" : ["0"]
-        }
+    dict_temp = {"E": ["3"],
+                 "Z": ["2"],
+                 "I": ["1"],
+                 "A": ["4"],
+                 "F": ["7"],
+                 "G": ["6", "9"],
+                 "B": ["8"],
+                 "L": ["1"],
+                 "O": ["0"]
+                 }
 
     final_dict = dict_temp.copy()
     keys = final_dict.keys()
@@ -40,8 +40,9 @@ def create_alphanum_dict():
 
     return final_dict
 
+
 def asignee_name_regex(name: str):
-    
+
     if name and isinstance(name, str):
         regex = ""
         alphanum_dict = create_alphanum_dict()
@@ -59,7 +60,7 @@ def asignee_name_regex(name: str):
 
                 if upper in alphanum_dict.keys():
                     alphanum_set.update(alphanum_dict[upper])
-            
+
             else:
                 alphanum_set.add(char)
 
@@ -94,11 +95,13 @@ def specs(unique = None, assigned = None):
     # Regex definitions - single comment, multi comment and the assignee's name
     single = '[Tt][Oo0][\\-\\_]?[Dd][Oo0]'
     multi = '\"{3} [Tt][Oo0][\\-\\_]?[Dd][Oo0]'
-    name = asignee_name_regex(assigned.strip().replace('\'', "").replace("[", "").replace("]",""))
+    name = asignee_name_regex(str(assigned)
+                              .strip()
+                              .replace('\'', "")
+                              .replace("[", "")
+                              .replace("]", ""))
 
     # Configurations
-    assign_to, et_index = None, -1
-    
     token_specification = [
         ('single_line', '({}:).*'.format(single)),
         ('multiline', '({}:)[\\s\\S]*?(\"\"\")'.format(multi)),
@@ -142,15 +145,15 @@ def tokenize(code, file, **kwargs):
         tok_regex = specs("soon")
 
     elif kwargs["assigned"]:
-        tok_regex = specs("assign", assigned = str(kwargs["assigned"]))
+        tok_regex = specs("assign", assigned = kwargs["assigned"])
 
     else:
         tok_regex = specs()
 
+    assign_to, et_index = None, -1
     line_num = 1
     multi_line_num = None
     end_last_token = -1
-    assign_to = None
 
     # iteration over tokens found in code
     for mo in re.finditer(tok_regex, code):
@@ -219,6 +222,3 @@ def tokenize(code, file, **kwargs):
                 line_num += 1
             else:
                 end_last_token = -1
-
-if __name__ == "__main__":
-    print(asignee_name_regex("avivfaraj"))
