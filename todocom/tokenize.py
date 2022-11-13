@@ -12,6 +12,67 @@ class Token(NamedTuple):
     # date:
 
 
+def create_alphanum_dict():
+    dict_temp = {"E" : ["3"],
+        "Z" : ["2"],
+        "I" : ["1"],
+        "A" : ["4"],
+        "F" : ["7"],
+        "G" : ["6", "9"],
+        "B" : ["8"],
+        "L" : ["1"],
+        "O" : ["0"]
+        }
+
+    final_dict = dict_temp.copy()
+    keys = final_dict.keys()
+    for key, ls in dict_temp.items():
+        nums = "".join(ls)
+        for number in ls:
+            if number in keys:
+                final_dict[number].extend([key, key.lower()])
+            else:
+                final_dict[number] = [key, key.lower()]
+
+            _ = nums.replace(number, "")
+            if _:
+                final_dict[number].extend([_])
+
+    return final_dict
+
+def asignee_name_regex(name: str):
+    
+    if name and isinstance(name, str):
+        regex = ""
+        alphanum_dict = create_alphanum_dict()
+        for char in name:
+            alphanum_set = set()
+            if char == " ":
+                regex += " "
+                continue
+
+            regex += "["
+            if char.isalpha():
+                upper = char.upper()
+                alphanum_set.add(upper)
+                alphanum_set.add(char.lower())
+
+                if upper in alphanum_dict.keys():
+                    alphanum_set.update(alphanum_dict[upper])
+            
+            else:
+                alphanum_set.add(char)
+
+                if char in alphanum_dict.keys():
+                    alphanum_set.update(alphanum_dict[upper])
+
+            if alphanum_set:
+                regex += "".join(alphanum_set)
+            regex += "]"
+
+        return regex
+
+
 def specs(unique = None, assigned = None):
     """
     Defintion of regular expression (regex) for TODO comments
@@ -30,11 +91,14 @@ def specs(unique = None, assigned = None):
     Reguar expression for tokenization.
     """
 
+    # Regex definitions - single comment, multi comment and the assignee's name
     single = '[Tt][Oo0][\\-\\_]?[Dd][Oo0]'
     multi = '\"{3} [Tt][Oo0][\\-\\_]?[Dd][Oo0]'
-    assign_to, et_index = None, -1
+    name = asignee_name_regex(assigned.strip().replace('\'', "").replace("[", "").replace("]",""))
 
     # Configurations
+    assign_to, et_index = None, -1
+    
     token_specification = [
         ('single_line', '({}:).*'.format(single)),
         ('multiline', '({}:)[\\s\\S]*?(\"\"\")'.format(multi)),
@@ -42,7 +106,7 @@ def specs(unique = None, assigned = None):
         ('urgent_multiline', '({} urgent:)[\\s\\S]*?(\"\"\")'.format(multi)),
         ('soon', '({} soon:).*'.format(single)),
         ('soon_multiline', '({} soon:)[\\s\\S]*?(\"\"\")'.format(multi)),
-        ('assign', '({} @{}).*'.format(single, str(assigned).lower())),
+        ('assign', '({} @{}).*'.format(single, name)),
         ('newline', r'\n')
     ]
 
@@ -78,7 +142,7 @@ def tokenize(code, file, **kwargs):
         tok_regex = specs("soon")
 
     elif kwargs["assigned"]:
-        tok_regex = specs("assign", assigned = kwargs["assigned"])
+        tok_regex = specs("assign", assigned = str(kwargs["assigned"]))
 
     else:
         tok_regex = specs()
@@ -155,3 +219,6 @@ def tokenize(code, file, **kwargs):
                 line_num += 1
             else:
                 end_last_token = -1
+
+if __name__ == "__main__":
+    print(asignee_name_regex("avivfaraj"))
