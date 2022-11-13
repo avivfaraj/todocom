@@ -8,7 +8,52 @@ class Token(NamedTuple):
     value: str
     line: int
     assign: str = None
+    # Todo @avivfaraj: add TODO comments due by date
     # date:
+
+
+def specs(unique = None, assigned = None):
+    """
+    Defintion of regular expression (regex) for TODO comments
+
+    Parameters:
+    ------------
+    unique: str | None
+        For type str can be either "urgent", "soon", or "assign".
+        None means returns all TODOs besides assigned ones.
+
+    assigned: str
+        Asignee's name
+
+    Return:
+    ------------
+    Reguar expression for tokenization.
+    """
+
+    single = '[Tt][Oo0][\\-\\_]?[Dd][Oo0]'
+    multi = '\"{3} [Tt][Oo0][\\-\\_]?[Dd][Oo0]'
+    assign_to, et_index = None, -1
+
+    # Configurations
+    token_specification = [
+        ('single_line', '({}:).*'.format(single)),
+        ('multiline', '({}:)[\\s\\S]*?(\"\"\")'.format(multi)),
+        ('urgent', '({} urgent:).*'.format(single)),
+        ('urgent_multiline', '({} urgent:)[\\s\\S]*?(\"\"\")'.format(multi)),
+        ('soon', '({} soon:).*'.format(single)),
+        ('soon_multiline', '({} soon:)[\\s\\S]*?(\"\"\")'.format(multi)),
+        ('assign', '({} @{}).*'.format(single, str(assigned).lower())),
+        ('newline', r'\n')
+    ]
+
+    if unique in ["urgent", "soon", "assign"]:
+        return '|'.join('(?P<%s>%s)' % pair
+                        for pair in token_specification
+                        if unique in pair[0] or "newline" in pair[0])
+    else:
+        return '|'.join('(?P<%s>%s)' % pair
+                        for pair in token_specification
+                        if "assign" not in pair[0])
 
 
 def tokenize(code, file, **kwargs):
@@ -26,45 +71,22 @@ def tokenize(code, file, **kwargs):
         ** newline          ---> required for counting rows!
     """
 
-    single = '[Tt][Oo0][\\-\\_]?[Dd][Oo0]'
-    multi = '\"{3} [Tt][Oo0][\\-\\_]?[Dd][Oo0]'
-    assign_to, et_index = None, -1
-
-    # Configurations
-    token_specification = [
-        ('single_line', '({}:).*'.format(single)),
-        ('multiline', '({}:)[\\s\\S]*?(\"\"\")'.format(multi)),
-        ('urgent', '({} urgent:).*'.format(single)),
-        ('urgent_multiline', '({} urgent:)[\\s\\S]*?(\"\"\")'.format(multi)),
-        ('soon', '({} soon:).*'.format(single)),
-        ('soon_multiline', '({} soon:)[\\s\\S]*?(\"\"\")'.format(multi)),
-        ('assign', '({} @{}).*'.format(single, str(kwargs["assigned"]).lower())),
-        ('newline', r'\n')
-    ]
-
     if kwargs["urgent"]:
-        tok_regex = '|'.join('(?P<%s>%s)' % pair
-                             for pair in token_specification
-                             if "urgent" in pair[0] or "newline" in pair[0])
+        tok_regex = specs("urgent")
 
     elif kwargs["soon"]:
-        tok_regex = '|'.join('(?P<%s>%s)' % pair
-                             for pair in token_specification
-                             if "soon" in pair[0] or "newline" in pair[0])
+        tok_regex = specs("soon")
 
     elif kwargs["assigned"]:
-        tok_regex = '|'.join('(?P<%s>%s)' % pair
-                             for pair in token_specification
-                             if "assign" in pair[0] or "newline" in pair[0])
+        tok_regex = specs("assign", assigned = kwargs["assigned"])
 
     else:
-        tok_regex = '|'.join('(?P<%s>%s)' % pair
-                             for pair in token_specification
-                             if "assign" not in pair[0])
+        tok_regex = specs()
 
     line_num = 1
     multi_line_num = None
     end_last_token = -1
+    assign_to = None
 
     # iteration over tokens found in code
     for mo in re.finditer(tok_regex, code):
