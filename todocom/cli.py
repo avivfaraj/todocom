@@ -5,13 +5,14 @@ from todocom.utils import get_files, print_todos, save_todos
 WHITE = "\033[0m"
 YELLOW = "\033[33m"
 
+
 def cli_tool():
     """
-    Define arguments for "todo" command (cli) using argparse package. 
+    Define arguments for "todo" command (cli) using argparse package.
 
     Return:
     ------------
-    argparse.ArgumentParser Object 
+    argparse.ArgumentParser Object
     """
 
     # create a parser object
@@ -57,6 +58,7 @@ def cli_tool():
 
     return parser
 
+
 def main():
 
     parser = cli_tool()
@@ -83,7 +85,7 @@ def main():
                               urgent = args.urgent,
                               soon = args.soon,
                               assigned = args.assigned):
-        
+
             # Ensure tokens are put in the correct list
             if args.out:
                 todos.append(token)
@@ -94,7 +96,6 @@ def main():
                     soon_todos.append(token)
                 else:
                     reg_todos.append(token)
-            
 
     if args.out:
         # Store results in a txt file
