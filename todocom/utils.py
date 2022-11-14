@@ -6,6 +6,8 @@ BOLD = "\033[1m"
 RED = "\033[31m"
 CYAN = "\033[1;36m"
 WHITE = "\033[0m"
+PURPLE = "\033[1;94m"
+LIGHT_YELLOW = "\033[1;33m"
 
 # Ignore files/dirs lists
 ignore_files = ["__main__.py",
@@ -61,11 +63,11 @@ def format_todos(tokens = [], color = True):
 
         for token in tokens:
             if not token.assign:
-                yield (f'{token.file} --> pr: {token.re_type}, '
-                       f'Line: {token.line}, comment: {font_color} {token.value} {end}')
+                yield (f'{BOLD}{token.file}{end} * {PURPLE}{token.line}{end} * {LIGHT_YELLOW}>>{end}'
+                       f'{font_color} {token.value} {end}')
             else:
-                yield (f'{token.file} --> pr: {token.re_type}, assigned: {token.assign}, '
-                       f'Line: {token.line}, comment: {font_color} {token.value} {end}')
+                yield (f'{BOLD}{token.file}{end} * {PURPLE}{token.line}{end} * @{token.assign} '
+                       f'{LIGHT_YELLOW}>>{end}{font_color} {token.value} {end}')
 
 
 def print_todos(tokens = []):
