@@ -63,8 +63,8 @@ def format_todos(tokens = [], color = True):
 
         for token in tokens:
             if not token.assign:
-                yield (f'{BOLD}{token.file}{end} * {PURPLE}{token.line}{end} * {LIGHT_YELLOW}>>{end}'
-                       f'{font_color} {token.value} {end}')
+                yield (f'{BOLD}{token.file}{end} * {PURPLE}{token.line}{end} * '
+                       f'{LIGHT_YELLOW}>>{end}{font_color} {token.value} {end}')
             else:
                 yield (f'{BOLD}{token.file}{end} * {PURPLE}{token.line}{end} * @{token.assign} '
                        f'{LIGHT_YELLOW}>>{end}{font_color} {token.value} {end}')
