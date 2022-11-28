@@ -20,7 +20,6 @@ def create_alphanum_dict():
                  "F": ["7"],
                  "G": ["6", "9"],
                  "B": ["8"],
-                 "L": ["1"],
                  "O": ["0"]
                  }
 
@@ -65,7 +64,7 @@ def asignee_name_regex(name: str):
                 alphanum_set.add(char)
 
                 if char in alphanum_dict.keys():
-                    alphanum_set.update(alphanum_dict[upper])
+                    alphanum_set.update(alphanum_dict[char])
 
             if alphanum_set:
                 regex += "".join(alphanum_set)
