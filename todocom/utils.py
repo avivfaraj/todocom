@@ -1,4 +1,5 @@
 import os
+import argparse
 from pathlib import Path
 
 # Constants
@@ -26,56 +27,12 @@ ignore_dirs = ["__pycache__",
                "dist"]
 
 
-def format_todos(tokens = [], color = True):
-    """
-    A generator function that receives list of TODO tokens
-    and returns each one as a string with all information.
-    'urgent' and 'soon' comments will be printed in RED and
-    CYAN respectively if 'color' is True.
-
-    Parameters:
-    ------------
-    tokens: List[Token]
-        List of all TODO tokens
-
-    color: Boolean
-        If True -> prints urgent and soon TODO comments in a different
-        color to emphasize them.
-
-    Return:
-    ------------
-    String with information about that TODO comment
-    """
-    if tokens:
-        font_color = WHITE
-        end = WHITE
-        if color:
-            if "urgent" in tokens[0].re_type:
-                font_color = BOLD + RED
-
-            elif "soon" in tokens[0].re_type:
-                font_color = BOLD + CYAN
-            else:
-                font_color = WHITE
-        else:
-            font_color = ""
-            end = ""
-
-        for token in tokens:
-            if not token.assign:
-                yield (f'{BOLD}{token.file}{end} * {PURPLE}{token.line}{end} * '
-                       f'{LIGHT_YELLOW}>>{end}{font_color} {token.value} {end}')
-            else:
-                yield (f'{BOLD}{token.file}{end} * {PURPLE}{token.line}{end} * @{token.assign} '
-                       f'{LIGHT_YELLOW}>>{end}{font_color} {token.value} {end}')
-
-
 def print_todos(tokens = []):
     """
     Print all TODOs to terminal
     """
-    for i in format_todos(tokens):
-        print(i)
+    for i in tokens:
+        print(i.print())
 
 
 def save_todos(file_path, tokens = []):
@@ -91,8 +48,8 @@ def save_todos(file_path, tokens = []):
 
     # Append to the new file
     with open(output_file, "a") as file:
-        for i in format_todos(tokens, color = False):
-            file.write(i + "\n")
+        for i in tokens:
+            file.write(str(i) + "\n")
 
 
 def get_files(path_ls = []):
@@ -124,3 +81,166 @@ def get_files(path_ls = []):
 
                     if file not in ignore_files:
                         yield f'{root}/{file}'.replace("//", "/")
+
+
+def cli_tool():
+    """
+    Define arguments for "todo" command (cli) using argparse package.
+
+    Return:
+    ------------
+    argparse.ArgumentParser Object
+    """
+
+    # create a parser object
+    parser = argparse.ArgumentParser(description = "Read directories")
+
+    # add argument
+    parser.add_argument("dirs",
+                        nargs = '*',
+                        metavar = "dir",
+                        type = str,
+                        default = ['./'],
+                        help = "Find all files within directories")
+
+    # Urgent priority (activate using -u or --urgent)
+    parser.add_argument(
+        "-u", "--urgent",
+        action="store_true",
+        help=("Retrieve 'urgent' TODO comments. "))
+
+    # Soon priority (activate using -s or --soon)
+    parser.add_argument(
+        "-s", "--soon",
+        action="store_true",
+        help=("Retrieve 'soon' TODO comments. "))
+
+    # Output file argument
+    parser.add_argument(
+        "-o", "--output",
+        nargs = "?",
+        dest = "out",
+        const = './todo.txt',
+        default = None,
+        help = ("Save comments in an external file"))
+
+    # Assigned argument
+    parser.add_argument(
+        "-a", "--assigned",
+        nargs = 1,
+        metavar = "assigned_to",
+        type = str,
+        default = None,
+        help = "Find all TODOs that were assigned to a specific user")
+
+    return parser
+
+
+def create_alphanum_dict():
+    dict_temp = {"E": ["3"],
+                 "Z": ["2"],
+                 "I": ["1"],
+                 "A": ["4"],
+                 "F": ["7"],
+                 "G": ["6", "9"],
+                 "B": ["8"],
+                 "O": ["0"]
+                 }
+
+    final_dict = dict_temp.copy()
+    keys = final_dict.keys()
+    for key, ls in dict_temp.items():
+        nums = "".join(ls)
+        for number in ls:
+            if number in keys:
+                final_dict[number].extend([key, key.lower()])
+            else:
+                final_dict[number] = [key, key.lower()]
+
+            _ = nums.replace(number, "")
+            if _:
+                final_dict[number].extend([_])
+
+    return final_dict
+
+
+def asignee_name_regex(name: str):
+
+    if name and isinstance(name, str):
+        regex = ""
+        alphanum_dict = create_alphanum_dict()
+        for char in name:
+            alphanum_set = set()
+            if char == " ":
+                regex += " "
+                continue
+
+            regex += "["
+            if char.isalpha():
+                upper = char.upper()
+                alphanum_set.add(upper)
+                alphanum_set.add(char.lower())
+
+                if upper in alphanum_dict.keys():
+                    alphanum_set.update(alphanum_dict[upper])
+
+            else:
+                alphanum_set.add(char)
+
+                if char in alphanum_dict.keys():
+                    alphanum_set.update(alphanum_dict[char])
+
+            if alphanum_set:
+                regex += "".join(alphanum_set)
+            regex += "]"
+
+        return regex
+
+
+def specs(unique = None, assigned = None):
+    """
+    Defintion of regular expression (regex) for TODO comments
+
+    Parameters:
+    ------------
+    unique: str | None
+        For type str can be either "urgent", "soon", or "assign".
+        None means returns all TODOs besides assigned ones.
+
+    assigned: str
+        Asignee's name
+
+    Return:
+    ------------
+    Reguar expression for tokenization.
+    """
+
+    # Regex definitions - single comment, multi comment and the assignee's name
+    single = '[Tt][Oo0][\\-\\_]?[Dd][Oo0]'
+    multi = '\"{3} [Tt][Oo0][\\-\\_]?[Dd][Oo0]'
+    name = asignee_name_regex(str(assigned)
+                              .strip()
+                              .replace('\'', "")
+                              .replace("[", "")
+                              .replace("]", ""))
+
+    # Configurations
+    token_specification = [
+        ('single_line', '({}:).*'.format(single)),
+        ('multiline', '({}:)[\\s\\S]*?(\"\"\")'.format(multi)),
+        ('urgent', '({} urgent:).*'.format(single)),
+        ('urgent_multiline', '({} urgent:)[\\s\\S]*?(\"\"\")'.format(multi)),
+        ('soon', '({} soon:).*'.format(single)),
+        ('soon_multiline', '({} soon:)[\\s\\S]*?(\"\"\")'.format(multi)),
+        ('assign', '({} @{}).*'.format(single, name)),
+        ('newline', r'\n')
+    ]
+
+    if unique in ["urgent", "soon", "assign"]:
+        return '|'.join('(?P<%s>%s)' % pair
+                        for pair in token_specification
+                        if unique in pair[0] or "newline" in pair[0])
+    else:
+        return '|'.join('(?P<%s>%s)' % pair
+                        for pair in token_specification
+                        if "assign" not in pair[0])
