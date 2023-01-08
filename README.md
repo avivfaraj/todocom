@@ -4,6 +4,7 @@ To create the TODO list, simply open terminal and run the following command:
 ```
 todo [folder/file]
 ```
+![gen_todo](https://user-images.githubusercontent.com/73610201/211216011-27e057b0-0420-4d90-8950-999f75583566.gif)
 
 This command will print out all TODO comments that were found in the code, sorted by their prioritization: urgent, soon and regular. 
 _Urgent_ tasks will be printed in RED, _soon_ in CYAN and _regular_ comments in WHITE to make it easier to read. There is also an option to filter comments by their priotization:
@@ -11,15 +12,19 @@ _Urgent_ tasks will be printed in RED, _soon_ in CYAN and _regular_ comments in 
 # Prints urgent TODOs
 todo -u [folder/file]
 ```
+![urgent_todo](https://user-images.githubusercontent.com/73610201/211216002-c00860d3-7a61-425f-8cb2-939de85c01ec.gif)
+
 Or:
 ```
 # Prints soon TODOs
 todo -s [folder/file]
 ```
+![soon_todo](https://user-images.githubusercontent.com/73610201/211216007-f4eabb81-76d0-42c5-9334-0f13857e809b.gif)
 
 Finally, there is an option to save the list in a text file (stores as regular text without colors):
 ```
-# Store results in a txt file
+# Store results in a txt file![dummy](https://user-images.githubusercontent.com/73610201/211216021-a4859641-69a6-4e94-8f8c-2c0cafd0a455.png)
+
 todo -o [path/to/sample.txt] [folder/file]
 ```
 
