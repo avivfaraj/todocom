@@ -21,6 +21,14 @@ todo -s [folder/file]
 ```
 ![soon_todo](https://user-images.githubusercontent.com/73610201/211216007-f4eabb81-76d0-42c5-9334-0f13857e809b.gif)
 
+Comments can also be assigned to a user by adding "Todo @username" comment:
+```
+# Prints soon TODOs
+todo -a [USERNAME] [folder/file]
+```
+
+![assigned_todo](https://user-images.githubusercontent.com/73610201/211216263-ca453589-e490-49b3-a839-65315366f34f.gif)
+
 Finally, there is an option to save the list in a text file (stores as regular text without colors):
 ```
 # Store results in a txt file![dummy](https://user-images.githubusercontent.com/73610201/211216021-a4859641-69a6-4e94-8f8c-2c0cafd0a455.png)
