@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "todocom"
-version = "0.2.8"
+version = "0.2.9"
 description = "CLI to retrieve a list of all TODO comments in the code"
 authors = ["avivfaraj <avivfaraj4@gmail.com>"]
 license = "GPLv3"
