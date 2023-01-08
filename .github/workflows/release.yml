@@ -3,8 +3,8 @@ name: Test & Publish
 
 on:
   push:
-    branches:
-      - 'main'
+    tags:
+      - 'v*'
 
 jobs:
   test:
@@ -37,7 +37,6 @@ jobs:
   build_and_publish:
     runs-on: ubuntu-latest
     needs: test
-    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
         with:
@@ -76,16 +75,24 @@ jobs:
       #----------------------------------------------
       # Test in Test Pypi
       #----------------------------------------------
-      # - name: Test package in Test PyPi
-      #   run: |
-      #     poetry install --no-interaction
-      #     # set version number equal to latest git tag
-      #     poetry version $(git tag | tail -1)
+      - id: get_version
+        uses: battila7/get-version-action@v2
 
-      #     poetry config repositories.test-pypi https://test.pypi.org/legacy/
-      #     poetry config pypi-token.test-pypi ${{ secrets.PYPI_TEST_TOKEN }}
-      #     poetry publish --build -r testpypi
+      - name: Test package in Test PyPi
+        run: |
+          poetry install --no-interaction
 
+          # set version number equal to latest github version
+          poetry version ${{ steps.get_version.outputs.version-without-v }}
+
+          # Configuration of url and token
+          poetry config repositories.test-pypi https://test.pypi.org/legacy/
+          poetry config pypi-token.test-pypi ${{ secrets.PYPI_TEST_TOKEN }}
+
+          # Publish to test-pypi to ensure no errors
+          poetry publish --build -r test-pypi
+          
+      - run: poetry config pypi-token.pypi "${{ secrets.PYPI_TOKEN }}"
       - name: Publish package
         run:
-          poetry publish --build -u __token__ -p ${{ secrets.PYPI_TOKEN }}
+          echo yes | poetry publish --build
