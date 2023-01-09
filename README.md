@@ -31,7 +31,7 @@ todo -a [USERNAME] [folder/file]
 
 Finally, there is an option to save the list in a text file (stores as regular text without colors):
 ```
-# Store results in a txt file![dummy](https://user-images.githubusercontent.com/73610201/211216021-a4859641-69a6-4e94-8f8c-2c0cafd0a455.png)
+# Store results in a txt file
 
 todo -o [path/to/sample.txt] [folder/file]
 ```
